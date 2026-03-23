@@ -107,7 +107,7 @@ async function initGit(projectDir: string) {
 }
 
 export async function scaffold(config: ProjectConfig) {
-  const { features, projectDir, packageManager: pm } = config;
+  const { features, projectDir, packageManager: pm, noGit } = config;
 
   // Install base dependencies first
   await installDependencies(projectDir, pm);
@@ -156,5 +156,7 @@ export async function scaffold(config: ProjectConfig) {
   await updateLayout(projectDir, features);
 
   // Initialize git
-  await initGit(projectDir);
+  if (!noGit) {
+    await initGit(projectDir);
+  }
 }

@@ -57,6 +57,8 @@ All features except React Compiler are selected by default in the interactive pr
 | `--use-yarn` | Use yarn as the package manager |
 | `--use-pnpm` | Use pnpm as the package manager |
 | `--use-bun` | Use bun as the package manager |
+| `--dry-run` | Show what would be generated without writing any files |
+| `--no-git` | Skip git init and initial commit |
 
 When no package manager flag is passed, the CLI auto-detects which one you used to run the command.
 

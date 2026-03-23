@@ -21,6 +21,54 @@ describe('CLI', () => {
     expect(result.stdout).toContain('--use-pnpm');
   });
 
+  it('shows --dry-run and --no-git in help', async () => {
+    const result = await execaNode(CLI_PATH, ['--help'], {
+      env: { FORCE_COLOR: '0' },
+    });
+    expect(result.stdout).toContain('--dry-run');
+    expect(result.stdout).toContain('--no-git');
+  });
+
+  it('--dry-run prints summary without creating files', async () => {
+    const tmpDir = await createTempDir();
+    try {
+      const result = await execaNode(
+        CLI_PATH,
+        ['dry-test', '--default', '--dry-run', '--use-pnpm'],
+        { cwd: tmpDir, env: { FORCE_COLOR: '0' }, stdio: 'pipe' },
+      );
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('No files were written (dry run)');
+      expect(result.stdout).toContain('dry-test');
+      expect(result.stdout).toContain('shadcn/ui');
+      expect(result.stdout).toContain('Supabase');
+      expect(result.stdout).toContain('pnpm');
+      // Verify no project directory was created
+      const exists = await fs.access(path.join(tmpDir, 'dry-test')).then(
+        () => true,
+        () => false,
+      );
+      expect(exists).toBe(false);
+    } finally {
+      await fs.rm(tmpDir, { recursive: true, force: true });
+    }
+  });
+
+  it('--dry-run --no-git shows git skipped', async () => {
+    const tmpDir = await createTempDir();
+    try {
+      const result = await execaNode(
+        CLI_PATH,
+        ['dry-test', '--default', '--dry-run', '--no-git', '--use-pnpm'],
+        { cwd: tmpDir, env: { FORCE_COLOR: '0' }, stdio: 'pipe' },
+      );
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain('skipped (--no-git)');
+    } finally {
+      await fs.rm(tmpDir, { recursive: true, force: true });
+    }
+  });
+
   it('rejects invalid project names', async () => {
     const result = await execaNode(CLI_PATH, ['../../bad-name'], {
       reject: false,
@@ -56,6 +104,13 @@ describe('scaffold', { timeout: 300_000 }, () => {
 
     expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain('Your Blu Stack project is ready!');
+    // Improved summary includes feature list and next steps
+    expect(result.stdout).toContain('shadcn/ui');
+    expect(result.stdout).toContain('Supabase');
+    expect(result.stdout).toContain('cp .env.local.example .env.local');
+    expect(result.stdout).toContain('pnpm');
+    expect(result.stdout).toContain('dev');
+    expect(result.stdout).toContain('git repo initialized');
   });
 
   it('has correct project structure', async () => {

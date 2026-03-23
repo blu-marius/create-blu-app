@@ -69,4 +69,48 @@ export interface ProjectConfig {
   features: Feature[];
   packageManager: PackageManager;
   projectDir: string;
+  dryRun: boolean;
+  noGit: boolean;
 }
+
+export const FEATURE_LABELS: Record<Feature, string> = {
+  shadcn: "shadcn/ui",
+  supabase: "Supabase",
+  "tanstack-query": "TanStack Query",
+  "react-hook-form": "RHF + Zod",
+  "react-email": "React Email + Resend",
+  "eslint-prettier": "ESLint + Prettier",
+  "react-compiler": "React Compiler",
+};
+
+export const FEATURE_DEPS: Record<Feature, { deps: string[]; devDeps: string[] }> = {
+  shadcn: { deps: ["shadcn components (via npx shadcn init + add --all)"], devDeps: [] },
+  supabase: { deps: ["@supabase/supabase-js", "@supabase/ssr"], devDeps: [] },
+  "tanstack-query": { deps: ["@tanstack/react-query", "@tanstack/react-query-devtools"], devDeps: [] },
+  "react-hook-form": { deps: ["react-hook-form", "@hookform/resolvers", "zod"], devDeps: [] },
+  "react-email": { deps: ["react-email", "@react-email/components", "resend"], devDeps: [] },
+  "eslint-prettier": { deps: [], devDeps: ["prettier", "eslint-config-prettier", "prettier-plugin-tailwindcss"] },
+  "react-compiler": { deps: [], devDeps: ["babel-plugin-react-compiler"] },
+};
+
+export const FEATURE_FILES: Record<Feature, string[]> = {
+  shadcn: ["src/components/ui/ (all components)", "components.json"],
+  supabase: [
+    "src/lib/supabase/client.ts",
+    "src/lib/supabase/server.ts",
+    "src/lib/supabase/proxy.ts",
+    "src/proxy.ts",
+    ".env.local.example",
+  ],
+  "tanstack-query": [
+    "src/providers/get-query-client.ts",
+    "src/providers/query-provider.tsx",
+  ],
+  "react-hook-form": ["src/lib/schemas.ts"],
+  "react-email": [
+    "emails/welcome.tsx",
+    "src/actions/send-email.ts",
+  ],
+  "eslint-prettier": [".prettierrc", "eslint.config.mjs (modified)"],
+  "react-compiler": ["next.config.ts (modified)"],
+};

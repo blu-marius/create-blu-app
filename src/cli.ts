@@ -30,6 +30,8 @@ export async function runCli(): Promise<ProjectConfig> {
     .option("--use-yarn", "Use yarn as the package manager")
     .option("--use-pnpm", "Use pnpm as the package manager")
     .option("--use-bun", "Use bun as the package manager")
+    .option("--dry-run", "Show what would be generated without writing files")
+    .option("--no-git", "Skip git init and initial commit")
     .parse(process.argv);
 
   const cliArgs = program.args;
@@ -118,5 +120,7 @@ export async function runCli(): Promise<ProjectConfig> {
     features: project.features as Feature[],
     packageManager: project.packageManager as PackageManager,
     projectDir,
+    dryRun: !!options.dryRun,
+    noGit: !options.git,
   };
 }
