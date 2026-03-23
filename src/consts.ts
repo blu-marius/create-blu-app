@@ -15,12 +15,14 @@ export type Feature =
   | "tanstack-query"
   | "react-hook-form"
   | "react-email"
-  | "eslint-prettier";
+  | "eslint-prettier"
+  | "react-compiler";
 
 export interface FeatureOption {
   value: Feature;
   label: string;
   hint: string;
+  defaultSelected?: boolean;
 }
 
 export const FEATURES: FeatureOption[] = [
@@ -53,6 +55,12 @@ export const FEATURES: FeatureOption[] = [
     value: "eslint-prettier",
     label: "ESLint + Prettier",
     hint: "Linting and formatting",
+  },
+  {
+    value: "react-compiler",
+    label: "React Compiler",
+    hint: "Automatic memoization (experimental)",
+    defaultSelected: false,
   },
 ];
 

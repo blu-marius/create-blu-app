@@ -40,8 +40,9 @@ Every project starts with **Next.js 16**, **TypeScript**, **Tailwind CSS**, and 
 - **React Hook Form + Zod** — Type-safe form validation with Zod v4 schema integration.
 - **React Email + Resend** — A starter email template and server action for sending transactional emails.
 - **ESLint + Prettier** — Linting with `eslint-config-prettier` and formatting with `prettier-plugin-tailwindcss`.
+- **React Compiler** — Automatic memoization via `babel-plugin-react-compiler` (off by default, experimental).
 
-All features are selected by default in the interactive prompt. Deselect any you don't need.
+All features except React Compiler are selected by default in the interactive prompt. Deselect any you don't need.
 
 ## Options
 
@@ -66,10 +67,13 @@ my-app/
 │   │   ├── layout.tsx              # Root layout with providers
 │   │   └── page.tsx
 │   ├── components/ui/              # shadcn/ui components
-│   ├── lib/supabase/
-│   │   ├── client.ts               # Browser client
-│   │   ├── server.ts               # Server client
-│   │   └── proxy.ts                # Session refresh helper
+│   ├── lib/
+│   │   ├── schemas.ts               # Zod schemas (login, signup)
+│   │   └── supabase/
+│   │       ├── client.ts            # Browser client
+│   │       ├── server.ts            # Server client
+│   │       ├── proxy.ts             # Session refresh helper
+│   │       └── hooks.ts             # TanStack Query hooks (useUser)
 │   ├── providers/
 │   │   ├── get-query-client.ts     # QueryClient singleton
 │   │   └── query-provider.tsx      # TanStack Query provider

@@ -9,10 +9,53 @@ import {
   installReactHookForm,
   installReactEmail,
   installEslintPrettier,
+  installReactCompiler,
 } from "../installers/index.js";
 import { runCommand } from "./run-command.js";
 import { getInstallCommand } from "./package-manager.js";
 import type { PackageManager } from "../consts.js";
+
+const SCHEMAS_TEMPLATE = `import * as z from "zod";
+
+export const loginSchema = z.object({
+  email: z.email("Invalid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+});
+
+export type LoginValues = z.infer<typeof loginSchema>;
+
+export const signupSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.email("Invalid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
+});
+
+export type SignupValues = z.infer<typeof signupSchema>;
+`;
+
+const SUPABASE_HOOKS_TEMPLATE = `"use client";
+
+import { useQuery } from "@tanstack/react-query";
+import { createClient } from "@/lib/supabase/client";
+
+export function useUser() {
+  return useQuery({
+    queryKey: ["user"],
+    queryFn: async () => {
+      const supabase = createClient();
+      if (!supabase) return null;
+
+      const { data, error } = await supabase.auth.getUser();
+      if (error) throw error;
+      return data.user;
+    },
+  });
+}
+`;
 
 async function installDependencies(projectDir: string, pm: PackageManager) {
   const spinner = ora("Installing dependencies...").start();
@@ -89,6 +132,24 @@ export async function scaffold(config: ProjectConfig) {
   // and modifies package.json
   if (features.includes("react-email")) {
     await installReactEmail(projectDir, pm);
+  }
+
+  // React Compiler modifies next.config.ts
+  if (features.includes("react-compiler")) {
+    await installReactCompiler(projectDir, pm);
+  }
+
+  // Generate schemas.ts when react-hook-form (with zod) is selected
+  if (features.includes("react-hook-form")) {
+    const libDir = path.join(projectDir, "src", "lib");
+    await fs.mkdir(libDir, { recursive: true });
+    await fs.writeFile(path.join(libDir, "schemas.ts"), SCHEMAS_TEMPLATE);
+  }
+
+  // Generate supabase hooks when both supabase and tanstack-query are selected
+  if (features.includes("supabase") && features.includes("tanstack-query")) {
+    const supabaseDir = path.join(projectDir, "src", "lib", "supabase");
+    await fs.writeFile(path.join(supabaseDir, "hooks.ts"), SUPABASE_HOOKS_TEMPLATE);
   }
 
   // Update layout.tsx with providers

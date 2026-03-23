@@ -93,6 +93,12 @@ describe('scaffold', { timeout: 300_000 }, () => {
 
     // Git initialized
     expect(await exists('.git')).toBe(true);
+
+    // Schemas template (react-hook-form + zod)
+    expect(await exists('src/lib/schemas.ts')).toBe(true);
+
+    // Supabase + TanStack Query hooks
+    expect(await exists('src/lib/supabase/hooks.ts')).toBe(true);
   });
 
   it('has correct env template', async () => {
@@ -150,6 +156,28 @@ describe('scaffold', { timeout: 300_000 }, () => {
     );
     expect(proxy).toContain('getClaims()');
     expect(proxy).not.toContain('getUser()');
+  });
+
+  it('has Zod schemas with inferred types', async () => {
+    const schemas = await fs.readFile(
+      path.join(projectDir, 'src/lib/schemas.ts'),
+      'utf-8',
+    );
+    expect(schemas).toContain('loginSchema');
+    expect(schemas).toContain('signupSchema');
+    expect(schemas).toContain('z.infer<typeof loginSchema>');
+    expect(schemas).toContain('z.infer<typeof signupSchema>');
+  });
+
+  it('has useUser hook combining Supabase and TanStack Query', async () => {
+    const hooks = await fs.readFile(
+      path.join(projectDir, 'src/lib/supabase/hooks.ts'),
+      'utf-8',
+    );
+    expect(hooks).toContain('"use client"');
+    expect(hooks).toContain('useQuery');
+    expect(hooks).toContain('useUser');
+    expect(hooks).toContain('supabase.auth.getUser()');
   });
 
   it('has env handling in supabase clients', async () => {

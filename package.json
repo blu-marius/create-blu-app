@@ -34,6 +34,14 @@
   ],
   "author": "",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blu-marius/create-blu-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/blu-marius/create-blu-app/issues"
+  },
+  "homepage": "https://github.com/blu-marius/create-blu-app#readme",
   "dependencies": {
     "@clack/prompts": "^0.9.1",
     "chalk": "^5.4.1",

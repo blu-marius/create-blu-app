@@ -87,8 +87,9 @@ export async function runCli(): Promise<ProjectConfig> {
         });
       },
       features: () => {
+        const defaultFeatures = FEATURES.filter((f) => f.defaultSelected !== false);
         if (options.default) {
-          return Promise.resolve(FEATURES.map((f) => f.value));
+          return Promise.resolve(defaultFeatures.map((f) => f.value));
         }
         return p.multiselect({
           message: "Which features would you like to include?",
@@ -97,7 +98,7 @@ export async function runCli(): Promise<ProjectConfig> {
             label: f.label,
             hint: f.hint,
           })),
-          initialValues: FEATURES.map((f) => f.value),
+          initialValues: defaultFeatures.map((f) => f.value),
           required: false,
         });
       },
