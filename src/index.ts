@@ -12,7 +12,9 @@ async function main() {
 
   logger.break();
   p.log.info(
-    `Creating ${chalk.bold(config.name)} with features: ${chalk.cyan(config.features.join(", "))}`
+    config.features.length > 0
+      ? `Creating ${chalk.bold(config.name)} with features: ${chalk.cyan(config.features.join(", "))}`
+      : `Creating ${chalk.bold(config.name)} with no additional features`
   );
   logger.break();
 

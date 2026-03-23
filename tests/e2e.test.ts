@@ -152,12 +152,12 @@ describe('scaffold', { timeout: 300_000 }, () => {
     expect(proxy).not.toContain('getUser()');
   });
 
-  it('has env validation in supabase clients', async () => {
+  it('has env handling in supabase clients', async () => {
     const client = await fs.readFile(
       path.join(projectDir, 'src/lib/supabase/client.ts'),
       'utf-8',
     );
-    expect(client).toContain('requireEnv');
+    expect(client).toContain('return null');
     expect(client).toContain('NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY');
     expect(client).not.toContain('ANON_KEY');
   });

@@ -7,92 +7,78 @@ import type { PackageManager } from "../consts.js";
 
 const SUPABASE_CLIENT_TEMPLATE = `import { createBrowserClient } from "@supabase/ssr";
 
-function requireEnv(name: string): string {
-  const value = process.env[name];
-  if (!value) throw new Error(\`Missing environment variable: \${name}\`);
-  return value;
-}
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
 export function createClient() {
-  return createBrowserClient(
-    requireEnv("NEXT_PUBLIC_SUPABASE_URL"),
-    requireEnv("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY")
-  );
+  if (!supabaseUrl || !supabaseKey) return null;
+
+  return createBrowserClient(supabaseUrl, supabaseKey);
 }
 `;
 
 const SUPABASE_SERVER_TEMPLATE = `import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
-function requireEnv(name: string): string {
-  const value = process.env[name];
-  if (!value) throw new Error(\`Missing environment variable: \${name}\`);
-  return value;
-}
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
 export async function createClient() {
+  if (!supabaseUrl || !supabaseKey) return null;
+
   const cookieStore = await cookies();
 
-  return createServerClient(
-    requireEnv("NEXT_PUBLIC_SUPABASE_URL"),
-    requireEnv("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"),
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            );
-          } catch {
-            // The \`setAll\` method was called from a Server Component.
-            // This can be ignored if you have proxy refreshing sessions.
-          }
-        },
+  return createServerClient(supabaseUrl, supabaseKey, {
+    cookies: {
+      getAll() {
+        return cookieStore.getAll();
       },
-    }
-  );
+      setAll(cookiesToSet) {
+        try {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            cookieStore.set(name, value, options)
+          );
+        } catch {
+          // The \`setAll\` method was called from a Server Component.
+          // This can be ignored if you have proxy refreshing sessions.
+        }
+      },
+    },
+  });
 }
 `;
 
 const PROXY_SUPABASE_TEMPLATE = `import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-function requireEnv(name: string): string {
-  const value = process.env[name];
-  if (!value) throw new Error(\`Missing environment variable: \${name}\`);
-  return value;
-}
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
   });
 
-  const supabase = createServerClient(
-    requireEnv("NEXT_PUBLIC_SUPABASE_URL"),
-    requireEnv("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"),
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          );
-          supabaseResponse = NextResponse.next({
-            request,
-          });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          );
-        },
+  if (!supabaseUrl || !supabaseKey) return supabaseResponse;
+
+  const supabase = createServerClient(supabaseUrl, supabaseKey, {
+    cookies: {
+      getAll() {
+        return request.cookies.getAll();
       },
-    }
-  );
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value }) =>
+          request.cookies.set(name, value)
+        );
+        supabaseResponse = NextResponse.next({
+          request,
+        });
+        cookiesToSet.forEach(({ name, value, options }) =>
+          supabaseResponse.cookies.set(name, value, options)
+        );
+      },
+    },
+  });
 
   // Validate the session token locally (no network request)
   await supabase.auth.getClaims();
