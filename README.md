@@ -1,5 +1,9 @@
 # create-blu-app
 
+[![npm version](https://img.shields.io/npm/v/create-blu-app)](https://www.npmjs.com/package/create-blu-app)
+[![npm downloads](https://img.shields.io/npm/dm/create-blu-app)](https://www.npmjs.com/package/create-blu-app)
+[![license](https://img.shields.io/npm/l/create-blu-app)](https://github.com/blu-marius/create-blu-app/blob/main/LICENSE)
+
 Scaffold a new project with the **Blu Stack** — a curated, opinionated set of tools for building modern full-stack apps with Next.js.
 
 ## Quickstart
@@ -57,6 +61,8 @@ All features except React Compiler are selected by default in the interactive pr
 When no package manager flag is passed, the CLI auto-detects which one you used to run the command.
 
 ## Generated Project Structure
+
+> Structure shown with all features selected. Files are only generated for the features you choose.
 
 ```
 my-app/
