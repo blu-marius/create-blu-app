@@ -65,40 +65,30 @@ const text = {
 };
 `;
 
-const SEND_ROUTE_TEMPLATE = `import * as z from "zod";
-import { Resend } from "resend";
-import WelcomeEmail from "../../../../emails/welcome";
+const SEND_ACTION_TEMPLATE = `"use server";
 
-// TODO: Add authentication before production use
+import * as z from "zod";
+import { Resend } from "resend";
+import WelcomeEmail from "../../emails/welcome";
 
 const sendEmailSchema = z.object({
   name: z.string().min(1).max(100),
   email: z.email(),
 });
 
-export async function POST(request: Request) {
-  try {
-    const resend = new Resend(process.env.RESEND_API_KEY);
-    const body = await request.json();
-    const { name, email } = sendEmailSchema.parse(body);
+export async function sendWelcomeEmail(data: { name: string; email: string }) {
+  const { name, email } = sendEmailSchema.parse(data);
+  const resend = new Resend(process.env.RESEND_API_KEY);
 
-    const { data, error } = await resend.emails.send({
-      from: "onboarding@resend.dev",
-      to: email,
-      subject: "Welcome!",
-      react: WelcomeEmail({ name }),
-    });
+  const { error } = await resend.emails.send({
+    from: "onboarding@resend.dev",
+    to: email,
+    subject: "Welcome!",
+    react: WelcomeEmail({ name }),
+  });
 
-    if (error) {
-      return Response.json({ error }, { status: 400 });
-    }
-
-    return Response.json({ data });
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return Response.json({ error: error.issues }, { status: 422 });
-    }
-    return Response.json({ error: "Failed to send email" }, { status: 500 });
+  if (error) {
+    throw new Error("Failed to send email");
   }
 }
 `;
@@ -115,16 +105,16 @@ export async function installReactEmail(projectDir: string, pm: PackageManager) 
     await runCommand(cmd, args, { cwd: projectDir });
 
     const emailsDir = path.join(projectDir, "emails");
-    const apiRouteDir = path.join(projectDir, "src", "app", "api", "send");
+    const actionsDir = path.join(projectDir, "src", "actions");
 
     await Promise.all([
       fs.mkdir(emailsDir, { recursive: true }),
-      fs.mkdir(apiRouteDir, { recursive: true }),
+      fs.mkdir(actionsDir, { recursive: true }),
     ]);
 
     await Promise.all([
       fs.writeFile(path.join(emailsDir, "welcome.tsx"), WELCOME_EMAIL_TEMPLATE),
-      fs.writeFile(path.join(apiRouteDir, "route.ts"), SEND_ROUTE_TEMPLATE),
+      fs.writeFile(path.join(actionsDir, "send-email.ts"), SEND_ACTION_TEMPLATE),
     ]);
 
     // Add email:dev script to package.json

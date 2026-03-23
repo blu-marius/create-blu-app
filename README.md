@@ -38,7 +38,7 @@ Every project starts with **Next.js 16**, **TypeScript**, **Tailwind CSS**, and 
 - **Supabase** — Pre-configured client, server, and proxy helpers for auth with automatic session refresh.
 - **TanStack Query** — Async state management with a provider, singleton QueryClient, and devtools.
 - **React Hook Form + Zod** — Type-safe form validation with Zod v4 schema integration.
-- **React Email + Resend** — A starter email template and API route for sending transactional emails.
+- **React Email + Resend** — A starter email template and server action for sending transactional emails.
 - **ESLint + Prettier** — Linting with `eslint-config-prettier` and formatting with `prettier-plugin-tailwindcss`.
 
 All features are selected by default in the interactive prompt. Deselect any you don't need.
@@ -60,8 +60,9 @@ When no package manager flag is passed, the CLI auto-detects which one you used 
 ```
 my-app/
 ├── src/
+│   ├── actions/
+│   │   └── send-email.ts           # Server action for sending emails
 │   ├── app/
-│   │   ├── api/send/route.ts      # Email sending endpoint (React Email)
 │   │   ├── layout.tsx              # Root layout with providers
 │   │   └── page.tsx
 │   ├── components/ui/              # shadcn/ui components
