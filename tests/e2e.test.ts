@@ -137,6 +137,7 @@ describe('scaffold', { timeout: 300_000 }, () => {
 
     // React Email
     expect(await exists('emails/welcome.tsx')).toBe(true);
+    expect(await exists('emails/password-reset.tsx')).toBe(true);
     expect(await exists('src/actions/send-email.ts')).toBe(true);
 
     // ESLint + Prettier
@@ -233,6 +234,37 @@ describe('scaffold', { timeout: 300_000 }, () => {
     expect(hooks).toContain('useQuery');
     expect(hooks).toContain('useUser');
     expect(hooks).toContain('supabase.auth.getUser()');
+  });
+
+  it('has email-wired auth actions when supabase + react-email + shadcn', async () => {
+    const auth = await fs.readFile(
+      path.join(projectDir, 'src/actions/auth.ts'),
+      'utf-8',
+    );
+    expect(auth).toContain('"use server"');
+    expect(auth).toContain('import { sendWelcomeEmail }');
+    expect(auth).toContain('await sendWelcomeEmail({ name, email })');
+    // Welcome email is wrapped in try/catch so failures don't block signup
+    expect(auth).toContain('catch');
+  });
+
+  it('has Tailwind with pixelBasedPreset in email templates', async () => {
+    const welcome = await fs.readFile(
+      path.join(projectDir, 'emails/welcome.tsx'),
+      'utf-8',
+    );
+    expect(welcome).toContain('Tailwind');
+    expect(welcome).toContain('pixelBasedPreset');
+    expect(welcome).toContain('className=');
+
+    const passwordReset = await fs.readFile(
+      path.join(projectDir, 'emails/password-reset.tsx'),
+      'utf-8',
+    );
+    expect(passwordReset).toContain('Tailwind');
+    expect(passwordReset).toContain('pixelBasedPreset');
+    expect(passwordReset).toContain('className=');
+    expect(passwordReset).toContain('resetLink');
   });
 
   it('has env handling in supabase clients', async () => {
