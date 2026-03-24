@@ -12,6 +12,7 @@ import {
   installReactCompiler,
   installAuthPages,
 } from "../installers/index.js";
+import { AUTH_ACTIONS_WITH_EMAIL_TEMPLATE } from "../installers/auth/templates/actions-with-email.js";
 import { runCommand } from "./run-command.js";
 import { getInstallCommand } from "./package-manager.js";
 import type { PackageManager } from "../consts.js";
@@ -150,6 +151,12 @@ export async function scaffold(config: ProjectConfig) {
   // Generate auth example pages when both supabase and shadcn are selected
   if (features.includes("supabase") && features.includes("shadcn")) {
     await installAuthPages(projectDir);
+  }
+
+  // Wire welcome email into signup when supabase + react-email + shadcn are all selected
+  if (features.includes("supabase") && features.includes("react-email") && features.includes("shadcn")) {
+    const actionsDir = path.join(projectDir, "src", "actions");
+    await fs.writeFile(path.join(actionsDir, "auth.ts"), AUTH_ACTIONS_WITH_EMAIL_TEMPLATE);
   }
 
   // Generate supabase hooks when both supabase and tanstack-query are selected

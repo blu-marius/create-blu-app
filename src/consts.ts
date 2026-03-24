@@ -112,6 +112,7 @@ export const FEATURE_FILES: Record<Feature, string[]> = {
   "react-hook-form": ["src/lib/schemas.ts"],
   "react-email": [
     "emails/welcome.tsx",
+    "emails/password-reset.tsx",
     "src/actions/send-email.ts",
   ],
   "eslint-prettier": [".prettierrc", "eslint.config.mjs (modified)"],

@@ -12,7 +12,9 @@ const WELCOME_EMAIL_TEMPLATE = `import {
   Heading,
   Html,
   Preview,
+  Tailwind,
   Text,
+  pixelBasedPreset,
 } from "@react-email/components";
 
 interface WelcomeEmailProps {
@@ -24,45 +26,70 @@ export default function WelcomeEmail({ name }: WelcomeEmailProps) {
     <Html>
       <Head />
       <Preview>Welcome to our platform</Preview>
-      <Body style={main}>
-        <Container style={container}>
-          <Heading style={h1}>Welcome, {name}!</Heading>
-          <Text style={text}>
-            Thanks for signing up. We&apos;re excited to have you on board.
-          </Text>
-        </Container>
-      </Body>
+      <Tailwind config={{ presets: [pixelBasedPreset] }}>
+        <Body className="bg-gray-50 font-sans">
+          <Container className="mx-auto mb-16 bg-white pb-12 pt-5">
+            <Heading className="mx-12 my-10 text-2xl font-bold text-gray-800">
+              Welcome, {name}!
+            </Heading>
+            <Text className="mx-12 text-base leading-6 text-gray-600">
+              Thanks for signing up. We&apos;re excited to have you on board.
+            </Text>
+          </Container>
+        </Body>
+      </Tailwind>
     </Html>
   );
 }
+`;
 
-const main = {
-  backgroundColor: "#f6f9fc",
-  fontFamily:
-    '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Ubuntu, sans-serif',
-};
+const PASSWORD_RESET_EMAIL_TEMPLATE = `import {
+  Body,
+  Container,
+  Head,
+  Heading,
+  Html,
+  Link,
+  Preview,
+  Tailwind,
+  Text,
+  pixelBasedPreset,
+} from "@react-email/components";
 
-const container = {
-  backgroundColor: "#ffffff",
-  margin: "0 auto",
-  padding: "20px 0 48px",
-  marginBottom: "64px",
-};
+interface PasswordResetEmailProps {
+  resetLink: string;
+}
 
-const h1 = {
-  color: "#333",
-  fontSize: "24px",
-  fontWeight: "bold",
-  margin: "40px 0",
-  padding: "0 48px",
-};
-
-const text = {
-  color: "#555",
-  fontSize: "16px",
-  lineHeight: "24px",
-  padding: "0 48px",
-};
+export default function PasswordResetEmail({ resetLink }: PasswordResetEmailProps) {
+  return (
+    <Html>
+      <Head />
+      <Preview>Reset your password</Preview>
+      <Tailwind config={{ presets: [pixelBasedPreset] }}>
+        <Body className="bg-gray-50 font-sans">
+          <Container className="mx-auto mb-16 bg-white pb-12 pt-5">
+            <Heading className="mx-12 my-10 text-2xl font-bold text-gray-800">
+              Reset your password
+            </Heading>
+            <Text className="mx-12 text-base leading-6 text-gray-600">
+              We received a request to reset your password. Click the link below
+              to choose a new one.
+            </Text>
+            <Link
+              href={resetLink}
+              className="mx-12 mb-4 block text-base text-blue-600"
+            >
+              Reset password
+            </Link>
+            <Text className="mx-12 text-base leading-6 text-gray-600">
+              If you didn&apos;t request this, you can safely ignore this email.
+            </Text>
+          </Container>
+        </Body>
+      </Tailwind>
+    </Html>
+  );
+}
 `;
 
 const SEND_ACTION_TEMPLATE = `"use server";
@@ -114,6 +141,7 @@ export async function installReactEmail(projectDir: string, pm: PackageManager) 
 
     await Promise.all([
       fs.writeFile(path.join(emailsDir, "welcome.tsx"), WELCOME_EMAIL_TEMPLATE),
+      fs.writeFile(path.join(emailsDir, "password-reset.tsx"), PASSWORD_RESET_EMAIL_TEMPLATE),
       fs.writeFile(path.join(actionsDir, "send-email.ts"), SEND_ACTION_TEMPLATE),
     ]);
 
