@@ -119,6 +119,12 @@ function printSummary(config: ProjectConfig) {
   console.log(chalk.bold("  Next steps:"));
   console.log(`  ${chalk.cyan("cd")} ${name}`);
   console.log(`  ${chalk.cyan(runCmd)} dev`);
+  if (!noGit) {
+    console.log("");
+    console.log(chalk.bold("  Push to GitHub:"));
+    console.log(`  ${chalk.cyan("git remote add origin")} <your-repo-url>`);
+    console.log(`  ${chalk.cyan("git push")} -u origin main`);
+  }
   console.log("");
   console.log(chalk.dim(`  Using ${pm}${noGit ? "" : " · git repo initialized"}`));
   console.log("");

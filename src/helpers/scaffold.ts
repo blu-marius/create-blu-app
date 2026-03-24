@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import path from "path";
+import chalk from "chalk";
 import ora from "ora";
 import type { ProjectConfig } from "../consts.js";
 import {
@@ -118,7 +119,9 @@ async function initGit(projectDir: string) {
     await runCommand("git", ["commit", "-m", "Initial commit from create-blu-app"], {
       cwd: projectDir,
     });
-    spinner.succeed("Git repository initialized");
+    spinner.succeed(
+      `Git repository initialized ${chalk.dim("(git init → git add -A → git commit -m \"Initial commit from create-blu-app\")")}`
+    );
   } catch (error) {
     spinner.fail("Failed to initialize git — you can do this manually");
   }
