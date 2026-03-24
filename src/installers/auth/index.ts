@@ -4,15 +4,19 @@ import path from "path";
 
 import { AUTH_ACTIONS_TEMPLATE } from "./templates/actions.js";
 import { LOGIN_PAGE_TEMPLATE } from "./templates/login.js";
+import { LOGIN_PAGE_RHF_TEMPLATE } from "./templates/login-rhf.js";
 import { SIGNUP_PAGE_TEMPLATE } from "./templates/sign-up.js";
+import { SIGNUP_PAGE_RHF_TEMPLATE } from "./templates/sign-up-rhf.js";
 import { SIGNUP_SUCCESS_PAGE_TEMPLATE } from "./templates/sign-up-success.js";
 import { FORGOT_PASSWORD_PAGE_TEMPLATE } from "./templates/forgot-password.js";
+import { FORGOT_PASSWORD_PAGE_RHF_TEMPLATE } from "./templates/forgot-password-rhf.js";
 import { UPDATE_PASSWORD_PAGE_TEMPLATE } from "./templates/update-password.js";
+import { UPDATE_PASSWORD_PAGE_RHF_TEMPLATE } from "./templates/update-password-rhf.js";
 import { CONFIRM_ROUTE_TEMPLATE } from "./templates/confirm.js";
 import { ERROR_PAGE_TEMPLATE } from "./templates/error.js";
 import { LOGOUT_BUTTON_TEMPLATE } from "./templates/logout-button.js";
 
-export async function installAuthPages(projectDir: string) {
+export async function installAuthPages(projectDir: string, useReactHookForm = false) {
   const spinner = ora("Scaffolding auth pages...").start();
 
   try {
@@ -32,13 +36,18 @@ export async function installAuthPages(projectDir: string) {
       fs.mkdir(componentsDir, { recursive: true }),
     ]);
 
+    const loginTemplate = useReactHookForm ? LOGIN_PAGE_RHF_TEMPLATE : LOGIN_PAGE_TEMPLATE;
+    const signupTemplate = useReactHookForm ? SIGNUP_PAGE_RHF_TEMPLATE : SIGNUP_PAGE_TEMPLATE;
+    const forgotPasswordTemplate = useReactHookForm ? FORGOT_PASSWORD_PAGE_RHF_TEMPLATE : FORGOT_PASSWORD_PAGE_TEMPLATE;
+    const updatePasswordTemplate = useReactHookForm ? UPDATE_PASSWORD_PAGE_RHF_TEMPLATE : UPDATE_PASSWORD_PAGE_TEMPLATE;
+
     await Promise.all([
       fs.writeFile(path.join(actionsDir, "auth.ts"), AUTH_ACTIONS_TEMPLATE),
-      fs.writeFile(path.join(authDir, "login", "page.tsx"), LOGIN_PAGE_TEMPLATE),
-      fs.writeFile(path.join(authDir, "sign-up", "page.tsx"), SIGNUP_PAGE_TEMPLATE),
+      fs.writeFile(path.join(authDir, "login", "page.tsx"), loginTemplate),
+      fs.writeFile(path.join(authDir, "sign-up", "page.tsx"), signupTemplate),
       fs.writeFile(path.join(authDir, "sign-up-success", "page.tsx"), SIGNUP_SUCCESS_PAGE_TEMPLATE),
-      fs.writeFile(path.join(authDir, "forgot-password", "page.tsx"), FORGOT_PASSWORD_PAGE_TEMPLATE),
-      fs.writeFile(path.join(authDir, "update-password", "page.tsx"), UPDATE_PASSWORD_PAGE_TEMPLATE),
+      fs.writeFile(path.join(authDir, "forgot-password", "page.tsx"), forgotPasswordTemplate),
+      fs.writeFile(path.join(authDir, "update-password", "page.tsx"), updatePasswordTemplate),
       fs.writeFile(path.join(authDir, "confirm", "route.ts"), CONFIRM_ROUTE_TEMPLATE),
       fs.writeFile(path.join(authDir, "error", "page.tsx"), ERROR_PAGE_TEMPLATE),
       fs.writeFile(path.join(componentsDir, "logout-button.tsx"), LOGOUT_BUTTON_TEMPLATE),

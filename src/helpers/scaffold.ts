@@ -37,6 +37,22 @@ export const signupSchema = z.object({
 });
 
 export type SignupValues = z.infer<typeof signupSchema>;
+
+export const forgotPasswordSchema = z.object({
+  email: z.email("Invalid email address"),
+});
+
+export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;
+
+export const updatePasswordSchema = z.object({
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
+});
+
+export type UpdatePasswordValues = z.infer<typeof updatePasswordSchema>;
 `;
 
 const SUPABASE_HOOKS_TEMPLATE = `"use client";
@@ -150,7 +166,7 @@ export async function scaffold(config: ProjectConfig) {
 
   // Generate auth example pages when both supabase and shadcn are selected
   if (features.includes("supabase") && features.includes("shadcn")) {
-    await installAuthPages(projectDir);
+    await installAuthPages(projectDir, features.includes("react-hook-form"));
   }
 
   // Wire welcome email into signup when supabase + react-email + shadcn are all selected
