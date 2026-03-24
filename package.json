@@ -1,6 +1,6 @@
 {
   "name": "create-blu-app",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Scaffold a new project with the Blu Stack: Next.js, shadcn, Tailwind CSS, Supabase, TanStack Query, React Hook Form, Zod, React Email, and Resend",
   "type": "module",
   "exports": "./dist/index.mjs",
