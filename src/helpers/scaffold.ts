@@ -10,6 +10,7 @@ import {
   installReactEmail,
   installEslintPrettier,
   installReactCompiler,
+  installAuthPages,
 } from "../installers/index.js";
 import { runCommand } from "./run-command.js";
 import { getInstallCommand } from "./package-manager.js";
@@ -144,6 +145,11 @@ export async function scaffold(config: ProjectConfig) {
     const libDir = path.join(projectDir, "src", "lib");
     await fs.mkdir(libDir, { recursive: true });
     await fs.writeFile(path.join(libDir, "schemas.ts"), SCHEMAS_TEMPLATE);
+  }
+
+  // Generate auth example pages when both supabase and shadcn are selected
+  if (features.includes("supabase") && features.includes("shadcn")) {
+    await installAuthPages(projectDir);
   }
 
   // Generate supabase hooks when both supabase and tanstack-query are selected

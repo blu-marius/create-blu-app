@@ -101,6 +101,9 @@ export const FEATURE_FILES: Record<Feature, string[]> = {
     "src/lib/supabase/proxy.ts",
     "src/proxy.ts",
     ".env.local.example",
+    "src/app/auth/ (login, sign-up, forgot/update password)",
+    "src/actions/auth.ts",
+    "src/components/logout-button.tsx",
   ],
   "tanstack-query": [
     "src/providers/get-query-client.ts",

@@ -126,7 +126,7 @@ export async function installReactEmail(projectDir: string, pm: PackageManager) 
     // Append Resend key to env example
     const envPath = path.join(projectDir, ".env.local.example");
     const envExists = await fs.access(envPath).then(() => true, () => false);
-    const resendEnv = "\n# Resend\nRESEND_API_KEY=your-resend-api-key\n";
+    const resendEnv = "\n# Resend\nRESEND_API_KEY=TODO_REPLACE_WITH_YOUR_RESEND_API_KEY\n";
 
     if (envExists) {
       await fs.appendFile(envPath, resendEnv);

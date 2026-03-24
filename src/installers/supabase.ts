@@ -104,6 +104,7 @@ export const config = {
 const ENV_TEMPLATE = `# Supabase
 NEXT_PUBLIC_SUPABASE_URL=TODO_REPLACE_WITH_YOUR_SUPABASE_URL
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=TODO_REPLACE_WITH_YOUR_SUPABASE_PUBLISHABLE_KEY
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 `;
 
 export async function installSupabase(projectDir: string, pm: PackageManager) {
