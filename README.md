@@ -39,7 +39,7 @@ npx create-blu-app@latest my-app --default
 Every project starts with **Next.js 16**, **TypeScript**, **Tailwind CSS**, and **Turbopack**. On top of that, you choose which features to add:
 
 - **shadcn/ui** — All components installed and ready to use. Beautiful, accessible, and fully customizable.
-- **Supabase** — Pre-configured client, server, and proxy helpers for auth with automatic session refresh.
+- **Supabase** — Pre-configured client, server, and proxy helpers for auth with automatic session refresh. Includes example auth pages (login, sign-up, forgot/update password) when paired with shadcn/ui.
 - **TanStack Query** — Async state management with a provider, singleton QueryClient, and devtools.
 - **React Hook Form + Zod** — Type-safe form validation with Zod v4 schema integration.
 - **React Email + Resend** — A starter email template and server action for sending transactional emails.
@@ -70,11 +70,22 @@ When no package manager flag is passed, the CLI auto-detects which one you used 
 my-app/
 ├── src/
 │   ├── actions/
+│   │   ├── auth.ts                  # Server actions (login, signup, forgot/update password, logout)
 │   │   └── send-email.ts           # Server action for sending emails
 │   ├── app/
+│   │   ├── auth/
+│   │   │   ├── login/page.tsx       # Login (email + password)
+│   │   │   ├── sign-up/page.tsx     # Register (name, email, password, confirm)
+│   │   │   ├── sign-up-success/page.tsx
+│   │   │   ├── forgot-password/page.tsx
+│   │   │   ├── update-password/page.tsx
+│   │   │   ├── confirm/route.ts     # Email confirmation handler
+│   │   │   └── error/page.tsx
 │   │   ├── layout.tsx              # Root layout with providers
 │   │   └── page.tsx
-│   ├── components/ui/              # shadcn/ui components
+│   ├── components/
+│   │   ├── logout-button.tsx        # Sign-out button component
+│   │   └── ui/                     # shadcn/ui components
 │   ├── lib/
 │   │   ├── schemas.ts               # Zod schemas (login, signup)
 │   │   └── supabase/
