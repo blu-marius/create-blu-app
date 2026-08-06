@@ -6,7 +6,9 @@ export function runCommand(
   opts?: Options
 ): ResultPromise {
   return execa(command, args, {
-    stdio: "ignore",
+    stdin: "ignore",
+    stdout: "ignore",
+    stderr: "pipe",
     ...opts,
   });
 }

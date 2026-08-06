@@ -1,9 +1,12 @@
 import ora from "ora";
 import fs from "node:fs/promises";
 import path from "path";
-import { runCommand } from "../helpers/run-command.js";
-import { getAddCommand } from "../helpers/package-manager.js";
-import type { PackageManager } from "../consts.js";
+
+export const REACT_EMAIL_DEPS = [
+  "react-email@5.2.10",
+  "@react-email/components@1.0.10",
+  "resend@6.9.4",
+] as const;
 
 const WELCOME_EMAIL_TEMPLATE = `import {
   Body,
@@ -120,17 +123,10 @@ export async function sendWelcomeEmail(data: { name: string; email: string }) {
 }
 `;
 
-export async function installReactEmail(projectDir: string, pm: PackageManager) {
-  const spinner = ora("Installing React Email + Resend...").start();
+export async function installReactEmail(projectDir: string) {
+  const spinner = ora("Setting up React Email + Resend...").start();
 
   try {
-    const [cmd, args] = getAddCommand(pm, [
-      "react-email@5.2.10",
-      "@react-email/components@1.0.10",
-      "resend@6.9.4",
-    ]);
-    await runCommand(cmd, args, { cwd: projectDir });
-
     const emailsDir = path.join(projectDir, "emails");
     const actionsDir = path.join(projectDir, "src", "actions");
 
@@ -162,9 +158,9 @@ export async function installReactEmail(projectDir: string, pm: PackageManager) 
       await fs.writeFile(envPath, resendEnv.trimStart());
     }
 
-    spinner.succeed("React Email + Resend installed");
+    spinner.succeed("React Email + Resend configured");
   } catch (error) {
-    spinner.fail("Failed to install React Email + Resend");
+    spinner.fail("Failed to configure React Email + Resend");
     throw error;
   }
 }

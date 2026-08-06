@@ -1,9 +1,12 @@
 import ora from "ora";
 import fs from "node:fs/promises";
 import path from "path";
-import { runCommand } from "../helpers/run-command.js";
-import { getAddCommand } from "../helpers/package-manager.js";
-import type { PackageManager } from "../consts.js";
+
+export const ESLINT_PRETTIER_DEPS = [
+  "prettier@3.8.1",
+  "eslint-config-prettier@10.1.8",
+  "prettier-plugin-tailwindcss@0.7.2",
+] as const;
 
 const PRETTIER_CONFIG = `{
   "semi": true,
@@ -14,17 +17,10 @@ const PRETTIER_CONFIG = `{
 }
 `;
 
-export async function installEslintPrettier(projectDir: string, pm: PackageManager) {
-  const spinner = ora("Installing ESLint + Prettier...").start();
+export async function installEslintPrettier(projectDir: string) {
+  const spinner = ora("Setting up ESLint + Prettier...").start();
 
   try {
-    const [cmd, args] = getAddCommand(
-      pm,
-      ["prettier@3.8.1", "eslint-config-prettier@10.1.8", "prettier-plugin-tailwindcss@0.7.2"],
-      true
-    );
-    await runCommand(cmd, args, { cwd: projectDir });
-
     await fs.writeFile(
       path.join(projectDir, ".prettierrc"),
       PRETTIER_CONFIG
@@ -59,7 +55,7 @@ export async function installEslintPrettier(projectDir: string, pm: PackageManag
 
     spinner.succeed("ESLint + Prettier configured");
   } catch (error) {
-    spinner.fail("Failed to install ESLint + Prettier");
+    spinner.fail("Failed to configure ESLint + Prettier");
     throw error;
   }
 }
