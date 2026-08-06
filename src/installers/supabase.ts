@@ -1,9 +1,11 @@
 import ora from "ora";
 import fs from "node:fs/promises";
 import path from "path";
-import { runCommand } from "../helpers/run-command.js";
-import { getAddCommand } from "../helpers/package-manager.js";
-import type { PackageManager } from "../consts.js";
+
+export const SUPABASE_DEPS = [
+  "@supabase/supabase-js@2.100.0",
+  "@supabase/ssr@0.9.0",
+] as const;
 
 const SUPABASE_CLIENT_TEMPLATE = `import { createBrowserClient } from "@supabase/ssr";
 
@@ -107,13 +109,10 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=TODO_REPLACE_WITH_YOUR_SUPABASE_PUBLISHABLE
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 `;
 
-export async function installSupabase(projectDir: string, pm: PackageManager) {
-  const spinner = ora("Installing Supabase...").start();
+export async function installSupabase(projectDir: string) {
+  const spinner = ora("Setting up Supabase...").start();
 
   try {
-    const [cmd, args] = getAddCommand(pm, ["@supabase/supabase-js@2.100.0", "@supabase/ssr@0.9.0"]);
-    await runCommand(cmd, args, { cwd: projectDir });
-
     const libDir = path.join(projectDir, "src", "lib", "supabase");
     await fs.mkdir(libDir, { recursive: true });
 
@@ -128,9 +127,9 @@ export async function installSupabase(projectDir: string, pm: PackageManager) {
       fs.writeFile(path.join(projectDir, ".env.local.example"), ENV_TEMPLATE),
     ]);
 
-    spinner.succeed("Supabase installed with auth proxy");
+    spinner.succeed("Supabase configured with auth proxy");
   } catch (error) {
-    spinner.fail("Failed to install Supabase");
+    spinner.fail("Failed to configure Supabase");
     throw error;
   }
 }
